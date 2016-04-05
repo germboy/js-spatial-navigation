@@ -6,7 +6,7 @@
  *
  * Licensed under the MPL license.
  */
-;(function($) {
+module.exports = (function($) {
   'use strict';
 
   /************************/
@@ -1203,7 +1203,7 @@
     }
   };
 
-  window.SpatialNavigation = SpatialNavigation;
+  // window.SpatialNavigation = SpatialNavigation;
 
   /********************/
   /* jQuery Interface */
@@ -1248,4 +1248,7 @@
       return this;
     };
   }
+
+  return SpatialNavigation;
+
 })(window.jQuery);
