@@ -906,6 +906,53 @@ module.exports = (function($) {
     }
   }
 
+  function onMouseOver(evt) {
+    var target = getNavigableTarget(evt.target), // account for child controls
+      current = getCurrentFocusedElement(),
+      preventDefault = function() {
+        evt.preventDefault();
+        evt.stopPropagation();
+        return false;
+      };
+
+    if (!target) { // we are moving over a non-focusable element, so we force a blur to occur
+      if (current && fireWillmove(current)) {
+        current.blur();
+      }
+    } else if (target !== getCurrentFocusedElement() && (!current || current && fireWillmove(current))) { // moving over a focusable element
+      focusElement(target, getSectionId(target));
+      preventDefault();
+    }
+  }
+
+  function getNavigableTarget(target) {
+    var parent;
+    while (target && !isFocusable(target)) {
+      parent = target.parentNode;
+      target = parent === document ? null : parent; // calling isNavigable on document is problematic
+    }
+    return target;
+  }
+
+  function isFocusable(elem) {
+    for (var id in _sections) { // check *all* the sections to see if the specified element is a focusable element
+      if (isNavigable(elem, id, true)) return true;
+    }
+    return false;
+  }
+
+  function fireWillmove(elem) {
+    var willmoveProperties;
+
+    willmoveProperties = {
+      direction: null, // there is no sensible direction for pointer focus
+      sectionId: getSectionId(elem),
+      cause: 'pointer'
+    };
+
+    return fireEvent(elem, 'willmove', willmoveProperties);
+  }
+
   function onFocus(evt) {
     var target = evt.target;
     if (target !== window && target !== document &&
@@ -963,6 +1010,7 @@ module.exports = (function($) {
         window.addEventListener('keyup', onKeyUp);
         window.addEventListener('focus', onFocus, true);
         window.addEventListener('blur', onBlur, true);
+        window.addEventListener('mouseover', onMouseOver);
         _ready = true;
       }
     },
@@ -972,6 +1020,7 @@ module.exports = (function($) {
       window.removeEventListener('focus', onFocus, true);
       window.removeEventListener('keyup', onKeyUp);
       window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('mouseover', onMouseOver);
       SpatialNavigation.clear();
       _idPool = 0;
       _ready = false;
