@@ -817,7 +817,7 @@ module.exports = (function($) {
           exclude(allNavigableElements, nextSectionElements),
           config
         );
-        nextSectionId = getSectionId(next);
+        nextSectionId = next ? getSectionId(next) : currentSectionId;
       }
 
       if (currentSectionId != nextSectionId) {
