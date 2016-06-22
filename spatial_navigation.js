@@ -806,6 +806,20 @@ module.exports = (function($) {
 
       var nextSectionId = getSectionId(next);
 
+      if (_sections[nextSectionId].containerDisabled) {
+        var nextSectionElements = sectionNavigableElements[nextSectionId];
+        for (var i=0, len=nextSectionElements.length; i<len; ++i) {
+          allNavigableElements.splice(allNavigableElements.indexOf(nextSectionElements[i]), 1);
+        }
+        next = navigate(
+          currentFocusedElement,
+          direction,
+          exclude(allNavigableElements, nextSectionElements),
+          config
+        );
+        nextSectionId = getSectionId(next);
+      }
+
       if (currentSectionId != nextSectionId) {
         var result = gotoLeaveFor(currentSectionId, direction);
         if (result) {
@@ -1122,6 +1136,22 @@ module.exports = (function($) {
     enable: function(sectionId) {
       if (_sections[sectionId]) {
         _sections[sectionId].disabled = false;
+        return true;
+      }
+      return false;
+    },
+
+    disableContainer: function(sectionId) {
+      if (_sections[sectionId]) {
+        _sections[sectionId].containerDisabled = true;
+        return true;
+      }
+      return false;
+    },
+
+    enableContainer: function(sectionId) {
+      if (_sections[sectionId]) {
+        _sections[sectionId].containerDisabled = false;
         return true;
       }
       return false;
