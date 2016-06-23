@@ -32,7 +32,8 @@ module.exports = (function($) {
     restrict: 'self-first', // 'self-first', 'self-only', 'none'
     tabIndexIgnoreList:
       'a, input, select, textarea, button, iframe, [contentEditable=true]',
-    navigableFilter: null
+    navigableFilter: null,
+    containerDisabled: false
   };
 
   /*********************/
